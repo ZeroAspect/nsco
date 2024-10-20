@@ -1,0 +1,24 @@
+<div class="container">
+  <h2>
+    Login
+  </h2>
+  {{{error}}}
+  <small class="text-small">
+    Campos marcados com asterisco (<strong class="text-danger">*</strong>) são obrigatórios.
+  </small>
+  <hr>
+  <form action="/login" method="post">
+    <div class="mb-3">
+      <label for="email" class="form-label">Email <strong class="text-danger">*</strong></label>
+      <input type="email" class="form-control" id="email" name="email" required>
+    </div>
+    <div class="mb-3">
+      <label for="password" class="form-label">Senha <strong class="text-danger">*</strong></label>
+      <input type="password" class="form-control" id="password" name="senha" required>
+    </div>
+    <div class="mb-3 d-grid gap-2">
+      <button type="submit" class="btn btn-success">Entrar</button>
+      <a href="/cadastrar" class="btn btn-link">Não tens uma conta?</a>
+    </div>
+  </form>
+</div>
