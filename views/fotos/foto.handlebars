@@ -1,0 +1,27 @@
+<div class="container">
+  <h3>
+    Publicar com <a href="/{{user}}">{{user}}</a>
+  </h3>
+  <small class="text-muted">
+    Campos marcados com asterisco (<strong class="text-danger">*</strong>) são obrigatórios.
+  </small>
+  <hr>
+  <form action="/publicar/foto" method="post" enctype="multipart/form-data">
+    {{!-- <div class="mb-3">
+      <label for="titulo" class="form-label">Titulo <strong class="text-danger">*</strong></label>
+      <input type="text" class="form-control" id="titulo" name="titulo" placeholder="Ex. de funções afim e linear" required>
+    </div> --}}
+    <div class="mb-3">
+      <label for="descricao" class="form-label">Descrição</label>
+      <textarea class="form-control" id="descricao" name="descricao" rows="3"></textarea>
+    </div>
+    <div class="mb-3">
+      <label for="imagem" class="form-label">Imagem <strong class="text-danger">*</strong></label>
+      <input type="file" class="form-control" id="imagem" name="foto" required>
+      <small class="form-text text-muted">Formatos permitidos:.jpg,.jpeg,.png</small>
+    </div>
+    <div class="mb-3 d-grid gap-2">
+      <button type="submit" class="btn btn-primary"><i>Publicar</i></button>
+    </div>
+  </form>
+</div>

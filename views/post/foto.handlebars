@@ -1,0 +1,28 @@
+{{#each post}}
+  <div class="p-3">
+    <div class="card">
+      <div class="card-header">
+        <small class="text-muted d-flex justify-content-between">
+          <a href="/{{nome}}">{{nome}}</a>
+          <span class="badge bg-primary">
+            {{post_like}}
+          </span>
+        </small>
+      </div>
+      <div class="card-body">
+        <img src="/images/{{fileName}}" class="card-img-top" alt="{{nome}}">
+        <p class="card-text">
+          {{{descricao}}}
+        </p>
+      </div>
+      <div class="card-footer">
+        <form action="/post/foto/{{id}}/like" method="post">
+          <button class="btn btn-sm btn-danger">
+            Curtidas
+            <span class="badge bg-primary">{{post_like}}</span>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+{{/each}}

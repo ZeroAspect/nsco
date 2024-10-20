@@ -1,0 +1,45 @@
+{{!-- <div class="p-3">
+  <div class="alert alert-info text-center" role="alert">
+    <a href="/publicar/foto" class="text-decoration-none text-muted">
+      <strong>
+        Novo post
+      </strong>
+    </a>
+  </div>
+  <div class="alert alert-success text-center" role="alert">
+    <a href="/" class="text-decoration-none text-muted">
+      <strong>
+        <i class="bi bi-card-image"></i>
+        Posts sem imagem aqui.
+      </strong>
+    </a>
+  </div>
+</div> --}}
+<div class="container text-center mb-3">
+  <button type="button" class="btn btn-sm btn-outline-primary" onclick="location.href='/publicar/foto'">
+    Publicar foto
+  </button>
+  <button type="button" class="btn btn-sm btn-outline-danger" onclick="location.href='/'">
+    Voltar para o inicio
+  </button>
+</div>
+{{#each fotos}}
+  <div class="container">
+    <div class="card mb-3">
+      <div class="card-header">
+        <small class="card-text d-flex justify-content-between">
+          <a href="/{{nome}}">{{nome}}</a>
+          <span class="badge bg-primary">{{post_like}}</span>
+        </small>
+      </div>
+      <div class="card-body">
+        <img src="/images/{{fileName}}" class="card-img-top" alt="{{nome}}">
+      </div>
+      <div class="card-footer">
+        <small class="text-muted">
+          <a href="/post/foto/{{id}}">Saiba mais.</a>
+        </small>
+      </div>
+    </div>
+  </div>
+{{/each}}
