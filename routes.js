@@ -8,10 +8,12 @@ const { marked } = require("marked")
 const Post = require("./post/Post.js")
 const db = require("./sequelize/sequelize.js")
 const MySQL = require("./db/initial-db.js")
+const upload = require("./upload/getImage.js")
+const Photos = require("./photo/photo.js")
 // Middleware
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
-
+app.use(express.static(path.join(__dirname + "/upload")))
 // Static files
 app.engine("handlebars", hbs.engine())
 app.set("view engine", "handlebars")
@@ -194,6 +196,116 @@ app.post('/publicar/conteudo', async(req, res)=>{
       res.redirect('/')
     }
   } catch (error) {
+    console.error(error)
+    res.status(500).send('Server error')
+  }
+})
+app.get('/fotos', async(req, res)=>{
+  const mysql = await MySQL()
+  const ip = await GetIP()
+  try{
+    const user = await User.findOne({
+      where: {
+        ip: ip.ip
+      }
+    })
+    if(user === null){
+      res.redirect('/login')
+    } else{
+      const [ fotos, rows ] = await mysql.query(`
+        SELECT
+        *
+        FROM
+        Fotos
+        ORDER BY
+        post_like
+        DESC`)
+      res.render('fotos', { fotos })
+    }
+  } catch(error){
+    console.error(error)
+    res.status(500).send('Server error')
+  }
+})
+
+app.get('/publicar/foto', async(req, res)=>{
+  const ip = await GetIP()
+  try{
+    const user = await User.findOne({
+      where: {
+        ip: ip.ip
+      }
+    })
+    if(user === null){
+      res.redirect('/login')
+    } else{
+      res.render('fotos/foto', { user: user['nome'] })
+    }
+  } catch(error){
+    console.error(error)
+    res.status(500).send('Server error')
+  }
+})
+app.post('/publicar/foto', upload.single('foto'), async(req, res)=>{
+  const ip = await GetIP()
+  const { descricao } = await req.body
+  const { foto } = req.file
+  console.log(req.file)
+  console.log(req.body)
+  const user = await User.findOne({
+    where: {
+      ip: ip.ip
+    }
+  })
+
+  try{
+    if(user === null){
+      res.redirect('/login')
+    } else{
+      const publish = await Photos.create({
+        nome: user['nome'],
+        descricao: marked(descricao),
+        fileName: req.file.filename
+      })
+      console.log(publish['id'])
+      res.redirect(`/post/foto/${publish['id']}`)
+    }
+  } catch(error){
+    console.error(error)
+    res.status(500).send('Server error')
+  }
+})
+app.get('/post/foto/:id', async(req, res)=>{
+  const mysql = await MySQL()
+  const id = req.params.id
+  try{
+    const [ post, rows ] = await mysql.query(`
+      SELECT *
+      FROM Fotos
+      WHERE id = ${id}
+      LIMIT 1`)
+    res.render('post/foto', { post })
+  } catch(error){
+    console.error(error)
+    res.status(500).send('Server error')
+  }
+})
+app.post('/post/foto/:id/like', async(req, res)=>{
+  const id = req.params.id
+  const mysql = await MySQL()
+  try{
+    const [ post, rows ] = await mysql.query(`
+      SELECT post_like
+      FROM Fotos
+      WHERE id = ${id}
+      LIMIT 1`)
+    const postLike = parseInt(post[0].post_like) + 1
+    await mysql.query(`
+      UPDATE Fotos
+      SET post_like = ${postLike}
+      WHERE id = ${id}`)
+    res.redirect(`/post/foto/${id}`)
+  } catch(error){
     console.error(error)
     res.status(500).send('Server error')
   }
