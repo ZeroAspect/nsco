@@ -4,7 +4,7 @@
       <div class="card-header">
         <small class="text-muted d-flex justify-content-between">
           <a href="/{{nome}}">{{nome}}</a>
-          <span class="badge bg-primary">
+          <span class="">
             {{post_like}}
           </span>
         </small>
@@ -17,12 +17,31 @@
       </div>
       <div class="card-footer">
         <form action="/post/foto/{{id}}/like" method="post">
-          <button class="btn btn-sm btn-danger">
+          <button class="btn btn-sm btn-outline-danger">
             Curtidas
-            <span class="badge bg-primary">{{post_like}}</span>
+            <span class="badge bg-danger">{{post_like}}</span>
           </button>
         </form>
       </div>
     </div>
   </div>
 {{/each}}
+<div class="container mb-3">
+  <div class="card">
+    <div class="card-header text-muted">
+      <span>Comentário</span>
+    </div>
+    <div class="card-body">
+      <form action="/post/foto/{{id}}/comentar" method="post">
+        <div class="mb-3">
+          <textarea class="form-control" id="comentario" name="comentario" rows="3" style="height: 144px;" required></textarea>
+        </div>
+      
+        <button type="submit" class="btn btn-outline-success">Comentar</button>
+        <button type="reset" class="btn btn-outline-danger">
+          Cancelar
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
