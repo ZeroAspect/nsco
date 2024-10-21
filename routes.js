@@ -72,15 +72,6 @@ app.post('/login', async(req, res)=>{
       }
     })
     if(user === null){
-      const error = `
-      <div class="alert alert-warning" role="alert">
-    <h4 class="alert-heading">Cuidado!</h4>
-    <p>Tem algum caractere incorreto nas informações apresentadas.</p>
-    <hr>
-    <p class="mb-0">Nós nunca compartilharemos suas informações com mais ninguém.</p>
-  </div>`
-      res.render('login', { error })
-    } else{
       const update = await User.update({
         ip: ip.ip
       },
@@ -91,6 +82,16 @@ app.post('/login', async(req, res)=>{
         }
       })
       res.redirect('/')
+    } else{
+      const error = `
+      <div class="alert alert-warning" role="alert">
+    <h4 class="alert-heading">Cuidado!</h4>
+    <p>Tem algum caractere incorreto nas informações apresentadas.</p>
+    <hr>
+    <p class="mb-0">Nós nunca compartilharemos suas informações com mais ninguém.</p>
+  </div>`
+      res.render('login', { error })
+      
     }
   } catch(error) {
     console.error(error)
