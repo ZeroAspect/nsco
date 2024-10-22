@@ -10,6 +10,7 @@ const db = require("./sequelize/sequelize.js")
 const MySQL = require("./db/initial-db.js")
 const upload = require("./upload/getImage.js")
 const Photos = require("./photo/photo.js")
+const Comentario = require("./models/Comment.js")
 // Middleware
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
@@ -33,7 +34,7 @@ app.get('/', async(req, res)=>{
     if(user === null){
       res.redirect('/login')
     } else{
-      const [ posts, rows ] = await mysql.query(`SELECT * FROM Posts ORDER BY post_like DESC`)
+      const [ posts, rows ] = await mysql.query(`SELECT * FROM Posts`)
       console.log(posts)
       res.render('home', { posts })
     }
@@ -307,6 +308,67 @@ app.post('/post/foto/:id/like', async(req, res)=>{
       WHERE id = ${id}`)
     res.redirect(`/post/foto/${id}`)
   } catch(error){
+    console.error(error)
+    res.status(500).send('Server error')
+  }
+})
+app.get('/post/:id', async(req, res)=>{
+  const mysql = await MySQL()
+  const id = req.params.id
+  try{
+    const [ post, rows ] = await mysql.query(`
+      SELECT *
+      FROM Posts
+      WHERE id = ${id}
+      LIMIT 1`)
+    res.render('post', { post })
+  } catch(error){
+    console.error(error)
+    res.status(500).send('Server error')
+  }
+})
+app.post('/post/:id/like', async(req, res)=>{
+  const id = req.params.id
+  const mysql = await MySQL()
+  try{
+    const [ post, rows ] = await mysql.query(`
+      SELECT post_like
+      FROM Posts
+      WHERE id = ${id}
+      LIMIT 1`)
+    const postLike = parseInt(post[0].post_like) + 1
+    await mysql.query(`
+      UPDATE Posts
+      SET post_like = ${postLike}
+      WHERE id = ${id}`)
+    res.redirect(`/post/${id}`)
+  } catch(error){
+    console.error(error)
+    res.status(500).send('Server error')
+  }
+})
+app.post('/post/:id/comentar', async(req, res)=>{
+  const id = req.params.id
+  const { comentario } = req.body
+  const mysql = await MySQL()
+  try{
+    const ip = await GetIP()
+    const user = await User.findOne({
+      where: {
+        ip: ip.ip
+      }
+    })
+    if(user === null){
+      res.redirect('/login')
+    } else{
+      await Comentario.create({
+        post_id: id,
+        nome: user['nome'],
+        comentario: marked(comentario)
+      })
+      res.redirect(`/post/${id}`)
+    }
+  }catch(error){
     console.error(error)
     res.status(500).send('Server error')
   }
